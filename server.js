@@ -16,10 +16,15 @@ const PORT = process.env.PORT || 3000;
 // }
 
 //bread and butter POST
-function writeFile(filePath, fileContent){
-  fs.writeFile(filePath, fileContent);
-  // error handling
-}
+
+// function writeFile(filePath, fileContent){
+//   // fs.writeFile(filePath, fileContent) {
+//     fs.writeFile(filePath + '.html' + queried[elementName] + '.html', function() {
+//   // }
+//   // error handling
+// }
+
+!$!$!$!$!$!$!Write the file into system based on element name!
 
 function send404Response(res){
   fs.readFile('./public/404.html', function(error, data) {
@@ -57,9 +62,18 @@ function handleGET(req, res){
  * save the rendered template
  * send OK message to user
  */
-function handlePOST(req, res){
-  fs.readFile('./public/' + req.url, (err, data) => {
-    var rawBody = '';
+function handlePOST(req, res) {
+  // fs.readFile('./public/elements', (err, data) => {
+  //   var rawBody = '';
+  // });
+  var queried;
+
+  req.on('data', function(chunk) {
+    queried = querystring.parse(chunk.toString());
+    // writeFile(queried[elementName], );
+    console.log(queried);
+  });
+  req.on('end', function() {
 
   });
 
