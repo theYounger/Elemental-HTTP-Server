@@ -4,27 +4,53 @@ const http = require('http');
 const fs = require('fs');
 const querystring = require('querystring');
 const PORT = process.env.PORT || 3000;
-// var PORT = 3000;
-// if( process.env.PORT ){
-//   PORT = process.env.PORT;
-// }
+var queried;
 
-// const ELEMENT_TEMPLATE = ``;
+function eleTemplate (queried) {
+return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Elements - ${queried.elementName}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>${queried.elementName}</h1>
+  <h2>${queried.elementSymbol}</h2>
+  <h3>${queried.elementAtomicNumber}</h3>
+  <p>${queried.elementDescription}</p>
+  <p><a href="/">back</a></p>
+</body>
+</html>`
+}
 
-// function renderTemplate(template, locals){
+function indexTemplate (queried) {
+return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Elements</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <h1>The Elements</h1>
+  <h2>These are all the known elements.</h2>
+  <h3>These are 2</h3>
+  <ol>
+    <li>
+      <a href="/hydrogen.html">Hydrogen</a>
+    </li>
+    <li>
+      <a href="/helium.html">Helium</a>
+    </li>
+  </ol>
+</body>
+</html>`
+}
 
-// }
-
-//bread and butter POST
-
-// function writeFile(filePath, fileContent){
-//   // fs.writeFile(filePath, fileContent) {
-//     fs.writeFile(filePath + '.html' + queried[elementName] + '.html', function() {
-//   // }
-//   // error handling
-// }
-
-!$!$!$!$!$!$!Write the file into system based on element name!
+function writeFile(filePath, fileContent){
+  fs.writeFile('./public/' + filePath + '.html', fileContent);
+}
 
 function send404Response(res){
   fs.readFile('./public/404.html', function(error, data) {
@@ -53,29 +79,23 @@ function handleGET(req, res){
   });
 }
 
-/*
- *
- * read in request data
- * parse the data into Object
- * prepare data to be written
- * render a template using that Object
- * save the rendered template
- * send OK message to user
- */
 function handlePOST(req, res) {
-  // fs.readFile('./public/elements', (err, data) => {
-  //   var rawBody = '';
-  // });
-  var queried;
 
   req.on('data', function(chunk) {
     queried = querystring.parse(chunk.toString());
-    // writeFile(queried[elementName], );
-    console.log(queried);
+    writeFile(queried['elementName'].toLowerCase(), eleTemplate(queried));
+    var newIndex = indexTemplate(queried).replace(
+    `</ol>`,
+      `<li>
+        <a href="${queried.elementName}.html">${queried.elementName}</a>
+      </li>
+    </ol>`
+    );
+    writeFile('index', newIndex);
   });
-  req.on('end', function() {
+  // req.on('end', function() {
 
-  });
+  // });
 
 }
 
@@ -99,3 +119,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, ()=> console.log(`server listening on port ${PORT}`));
+
+module.exports = queried;
